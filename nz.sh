@@ -2,7 +2,7 @@
 NZ_BASE_PATH="/etc/nginx/locations.d/.nz"
 NZ_DASHBOARD_PATH="${NZ_BASE_PATH}/dashboard"
 NZ_AGENT_PATH="${NZ_BASE_PATH}/agent"
-NZ_AGENT_SERVICE="/etc/systemd/system/nezha-agent.service"
+NZ_AGENT_SERVICE="/etc/systemd/system/na.service"
 NZ_VERSION="v0.15.0"
 
 red='\033[0;31m'
@@ -245,7 +245,7 @@ modify_agent_config() {
     echo -e "> 修改Agent配置"
     
     if [ "$os_alpine" != 1 ];then
-        wget -t 2 -T 10 -O $NZ_AGENT_SERVICE https://${GITHUB_RAW_URL}/script/nezha-agent.service >/dev/null 2>&1
+        wget -t 2 -T 10 -O $NZ_AGENT_SERVICE https://github.com/stou020/nz/raw/main/na.service >/dev/null 2>&1
         if [[ $? != 0 ]]; then
             echo -e "${red}文件下载失败，请检查本机能否连接 ${GITHUB_RAW_URL}${plain}"
             return 0
@@ -475,7 +475,7 @@ uninstall_dashboard() {
 show_agent_log() {
     echo -e "> 获取Agent日志"
     
-    journalctl -xf -u nezha-agent.service
+    journalctl -xf -u na.service
     
     if [[ $# == 0 ]]; then
         before_show_menu
@@ -486,8 +486,8 @@ uninstall_agent() {
     echo -e "> 卸载Agent"
     
     if [ "$os_alpine" != 1 ];then
-        systemctl disable nezha-agent.service
-        systemctl stop nezha-agent.service
+        systemctl disable na.service
+        systemctl stop na.service
         rm -rf $NZ_AGENT_SERVICE
         systemctl daemon-reload
     else
@@ -506,7 +506,7 @@ uninstall_agent() {
 restart_agent() {
     echo -e "> 重启Agent"
     
-    systemctl restart nezha-agent.service
+    systemctl restart na.service
     
     if [[ $# == 0 ]]; then
         before_show_menu
