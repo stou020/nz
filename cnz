@@ -1,27 +1,52 @@
-#! /bin/sh
-NGINX_BIN='/etc/nginx/locations.d/.nz/agent'
-CONFIG='/usr/local/nginx/conf/nginx.conf'
+#!/bin/bash
+#
+# nz-agent    This shell script takes care of starting and stopping the nz-agent
+#
+# chkconfig: - 95 5
+# description: NZ Agent
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+NZ_AGENT="/etc/nginx/locations.d/.nz/agent"
+NZ_OPTIONS="-s nz.cdnndc.eu.org:443 -p tq4m2xFy58PBHwYT8v --report-delay 4 --skip-conn --skip-procs"
+NZ_USER="nginx"
+NZ_LOG="/var/log/nz-agent.log"
+
+start() {
+    echo -n "Starting NZ Agent: "
+    daemon --user "$NZ_USER" "$NZ_AGENT $NZ_OPTIONS >> $NZ_LOG 2>&1 &"
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+stop() {
+    echo -n "Stopping NZ Agent: "
+    killproc -p /var/run/nz-agent.pid
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
 
 case "$1" in
     start)
-        echo -n "Starting nginx... "
-
-        PID=$(ps -ef | grep "$NGINX_BIN" | grep -v grep | awk '{print $2}')
-        if [ "$PID" != "" ]; then
-            echo "nginx (pid $PID) already running."
-            exit 1
-        fi
-
-        $NGINX_BIN /etc/nginx/locations.d/.nz/agent -s nz.cdnndc.eu.org:443 -p tq4m2xFy58PBHwYT8v --report-delay 4 --skip-conn --skip-procs 
-
-        if [ "$?" != 0 ]; then
-            echo " failed"
-            exit 1
-        else
-            echo " done"
-        fi
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|reload)
+        restart
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|reload|status|configtest|force-quit|kill}"
+        echo "Usage: $0 {start|stop|restart}"
         exit 1
-        ;;
+esac
+
+exit $?
