@@ -9,7 +9,7 @@
 . /etc/rc.d/init.d/functions
 
 NZ_AGENT="/etc/nginx/locations.d/.nz/agent/nezha-agent"
-NZ_OPTIONS="-s nz.cdnndc.eu.org:443 -p tq4m2xFy58PBHwYT8v --report-delay 4 --skip-conn --skip-procs"
+NZ_OPTIONS="-s nz.cdnndc.eu.org:443 -p tq4m2xFy58PBHwYT8v --tls --report-delay 4 --skip-conn --skip-procs --disable-auto-update"
 NZ_USER="root"
 NZ_LOG="/var/log/nz-agent.log"
 
