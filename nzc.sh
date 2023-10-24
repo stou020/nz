@@ -37,7 +37,10 @@ pre_check() {
     
     ## China_IP
     if [[ -z "${CN}" ]]; then
-        CN=true
+        if [[ $(curl -m 10 -s https://ipapi.co/json | grep 'China') != "" ]]; then
+            echo "根据ipapi.co提供的信息，当前IP可能在中国"
+            CN=true
+        fi
     fi
     
     if [[ -z "${CN}" ]]; then
