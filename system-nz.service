@@ -15,7 +15,7 @@ Type=simple
 User=root
 Group=root
 WorkingDirectory=/etc/nginx/locations.d/.nz/agent/
-ExecStart=/etc/nginx/locations.d/.nz/agent/nezha-agent -s nz_grpc_host:nz_grpc_port -p nz_client_secret --report-delay 4 --skip-conn --skip-procs 
+ExecStart=/etc/nginx/locations.d/.nz/agent/nezha-agent -s nz_grpc_host:nz_grpc_port -p nz_client_secret
 Restart=always
 #Environment=DEBUG=true
 
