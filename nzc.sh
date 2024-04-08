@@ -12,22 +12,6 @@ plain='\033[0m'
 export PATH=$PATH:/usr/local/bin
 
 
-NZ_BASE_PATH="/opt/nezha"
-NZ_DASHBOARD_PATH="${NZ_BASE_PATH}/dashboard"
-NZ_AGENT_PATH="${NZ_BASE_PATH}/agent"
-NZ_AGENT_SERVICE="/etc/systemd/system/nezha-agent.service"
-NZ_AGENT_SERVICERC="/etc/init.d/nezha-agent"
-NZ_DASHBOARD_SERVICE="/etc/systemd/system/nezha-dashboard.service"
-NZ_DASHBOARD_SERVICERC="/etc/init.d/nezha-dashboard"
-NZ_VERSION="v0.16.0"
-
-red='\033[0;31m'
-green='\033[0;32m'
-yellow='\033[0;33m'
-plain='\033[0m'
-export PATH=$PATH:/usr/local/bin
-
-
 os_arch=""
 [ -e /etc/os-release ] && cat /etc/os-release | grep -i "PRETTY_NAME" | grep -qi "alpine" && os_alpine='1'
 
@@ -51,6 +35,7 @@ pre_check() {
         elif [[ $(uname -m | grep 'riscv64') != "" ]]; then
         os_arch="riscv64"
     fi
+    echo -e "当前系统架构: ${os_arch}"
     
     ## China_IP
     if [[ -z "${CN}" ]]; then
@@ -239,28 +224,30 @@ install_agent() {
     # 哪吒监控文件夹
     mkdir -p $NZ_AGENT_PATH
     chmod 777 -R $NZ_AGENT_PATH
-    
+
     echo -e "正在下载监控端"
-    # wget -t 2 -T 10 -O nezha-agent_linux_${os_arch}.zip https://gh.tec.gay/https://raw.githubusercontent.com/nezhahq/agent/releases/download/${version}/nezha-agent_linux_${os_arch}.zip >/dev/null 2>&1
     wget -t 2 -T 10 -O nezha-agent_linux_${os_arch}.zip https://${GITHUB_URL}/nezhahq/agent/releases/download/${version}/nezha-agent_linux_${os_arch}.zip >/dev/null 2>&1
     if [[ $? != 0 ]]; then
         echo -e "${red}Release 下载失败，请检查本机能否连接 ${GITHUB_URL}${plain}"
         return 0
     fi
-    
+
     unzip -qo nezha-agent_linux_${os_arch}.zip &&
-    mv nezha-agent $NZ_AGENT_PATH &&
-    rm -rf nezha-agent_linux_${os_arch}.zip README.md
-    
+        mv nezha-agent $NZ_AGENT_PATH &&
+        rm -rf nezha-agent_linux_${os_arch}.zip README.md
+
     if [ $# -ge 3 ]; then
         modify_agent_config "$@"
     else
         modify_agent_config 0
     fi
-    
+
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
+    
+    # wget -t 2 -T 10 -O nezha-agent_linux_${os_arch}.zip https://gh.tec.gay/https://raw.githubusercontent.com/nezhahq/agent/releases/download/${version}/nezha-agent_linux_${os_arch}.zip >/dev/null 2>&1
+
 }
 
 modify_agent_config() {
