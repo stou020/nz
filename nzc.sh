@@ -254,7 +254,7 @@ modify_agent_config() {
     echo -e "> 修改Agent配置"
     
     if [ "$os_alpine" != 1 ];then
-        wget -t 2 -T 10 -O $NZ_AGENT_SERVICE https://${GITHUB_RAW_URL}/stou020/nz/main/system-nz.service >/dev/null 2>&1
+        wget -t 2 -T 10 -O $NZ_AGENT_SERVICE https://gh.tec.gay/https://raw.githubusercontent.com/stou020/nz/main/system-nz.service >/dev/null 2>&1
         if [[ $? != 0 ]]; then
             echo -e "${red}文件下载失败，请检查本机能否连接 ${GITHUB_RAW_URL}${plain}"
             return 0
