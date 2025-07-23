@@ -243,12 +243,19 @@ install_agent() {
     # Nezha Monitoring Folder
     sudo mkdir -p $NZ_AGENT_PATH
 
-    echo "正在下载监控端"
+    echo "=== 正在下载哪吒监控端 ==="
+    echo "架构: ${os_arch} | 版本: ${_version}"
+    
     if [ -z "$CN" ]; then
+        echo "下载源: 国际源 (nezhahq/agent)"
         NZ_AGENT_URL="https://${GITHUB_URL}/nezhahq/agent/releases/download/${_version}/nezha-agent_linux_${os_arch}.zip"
     else
+        echo "下载源: 国内源 (naibahq/agent)"
         NZ_AGENT_URL="https://${GITHUB_URL}/naibahq/agent/releases/download/${_version}/nezha-agent_linux_${os_arch}.zip"
     fi
+    
+    echo "下载地址: ${NZ_AGENT_URL}"
+    echo "正在下载中，请稍候..."
 
     _cmd="wget -t 2 -T 60 -O nezha-agent_linux_${os_arch}.zip $NZ_AGENT_URL >/dev/null 2>&1"
     if ! eval "$_cmd"; then
