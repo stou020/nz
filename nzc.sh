@@ -11,6 +11,18 @@ yellow='\033[0;33m'
 plain='\033[0m'
 export PATH=$PATH:/usr/local/bin
 
+err() {
+    printf "${red}%s${plain}\n" "$*" >&2
+}
+
+success() {
+    printf "${green}%s${plain}\n" "$*"
+}
+
+info() {
+    printf "${yellow}%s${plain}\n" "$*"
+}
+
 
 os_arch=""
 [ -e /etc/os-release ] && cat /etc/os-release | grep -i "PRETTY_NAME" | grep -qi "alpine" && os_alpine='1'
