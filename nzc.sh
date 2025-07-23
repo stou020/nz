@@ -92,7 +92,7 @@ update_script() {
     echo -e "3s后执行新脚本"
     sleep 3s
     clear
-    exec ./nezha.sh install_agent
+    exec ./nezha.sh
     exit 0
 }
 
@@ -198,43 +198,55 @@ selinux(){
     fi
 }
 
+
 install_agent() {
     install_base
     selinux
-    
-    echo -e "> 安装监控Agent"
-    
-    echo -e "正在获取监控Agent版本号"
-    
-    local version=$(curl -m 10 -sL "https://api.github.com/repos/nezhahq/agent/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
-    if [ ! -n "$version" ]; then
-        version=$(curl -m 10 -sL "https://fastly.jsdelivr.net/gh/nezhahq/agent/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/nezhahq\/agent@/v/g')
-    fi
-    if [ ! -n "$version" ]; then
-        version=$(curl -m 10 -sL "https://gcore.jsdelivr.net/gh/nezhahq/agent/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/nezhahq\/agent@/v/g')
-    fi
-    
-    if [ ! -n "$version" ]; then
-        echo -e "获取版本号失败，请检查本机能否链接 https://api.github.com/repos/nezhahq/agent/releases/latest"
-        return 0
+
+    echo "> 安装监控Agent"
+
+    # echo "正在获取监控Agent版本号"
+
+
+    # _version=$(curl -m 10 -sL "https://api.github.com/repos/nezhahq/agent/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+    # if [ -z "$_version" ]; then
+    #     _version=$(curl -m 10 -sL "https://gitee.com/api/v5/repos/naibahq/agent/releases/latest" | awk -F '"' '{for(i=1;i<=NF;i++){if($i=="tag_name"){print $(i+2)}}}')
+    # fi
+    # if [ -z "$_version" ]; then
+    #     _version=$(curl -m 10 -sL "https://fastly.jsdelivr.net/gh/nezhahq/agent/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/nezhahq\/agent@/v/g')
+    # fi
+    # if [ -z "$_version" ]; then
+    #     _version=$(curl -m 10 -sL "https://gcore.jsdelivr.net/gh/nezhahq/agent/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/nezhahq\/agent@/v/g')
+    # fi
+
+    # if [ -z "$_version" ]; then
+    #     err "获取 Agent 版本号失败，请检查本机能否链接 https://api.github.com/repos/nezhahq/agent/releases/latest"
+    #     return 1
+    # else
+    #     echo "当前最新版本为： ${_version}"
+    # fi
+
+    _version="v0.20.5"
+
+    # Nezha Monitoring Folder
+    sudo mkdir -p $NZ_AGENT_PATH
+
+    echo "正在下载监控端"
+    if [ -z "$CN" ]; then
+        NZ_AGENT_URL="https://${GITHUB_URL}/nezhahq/agent/releases/download/${_version}/nezha-agent_linux_${os_arch}.zip"
     else
-        echo -e "当前最新版本为: ${version}"
-    fi
-    
-    # 哪吒监控文件夹
-    mkdir -p $NZ_AGENT_PATH
-    chmod 777 -R $NZ_AGENT_PATH
-
-    echo -e "正在下载监控端"
-    wget -t 2 -T 10 -O nezha-agent_linux_${os_arch}.zip https://${GITHUB_URL}/nezhahq/agent/releases/download/${version}/nezha-agent_linux_${os_arch}.zip >/dev/null 2>&1
-    if [[ $? != 0 ]]; then
-        echo -e "${red}Release 下载失败，请检查本机能否连接 ${GITHUB_URL}${plain}"
-        return 0
+        NZ_AGENT_URL="https://${GITHUB_URL}/naibahq/agent/releases/download/${_version}/nezha-agent_linux_${os_arch}.zip"
     fi
 
-    unzip -qo nezha-agent_linux_${os_arch}.zip &&
-        mv nezha-agent $NZ_AGENT_PATH &&
-        rm -rf nezha-agent_linux_${os_arch}.zip README.md
+    _cmd="wget -t 2 -T 60 -O nezha-agent_linux_${os_arch}.zip $NZ_AGENT_URL >/dev/null 2>&1"
+    if ! eval "$_cmd"; then
+        err "Release 下载失败，请检查本机能否连接 ${GITHUB_URL}"
+        return 1
+    fi
+
+    sudo unzip -qo nezha-agent_linux_${os_arch}.zip &&
+        sudo mv nezha-agent $NZ_AGENT_PATH &&
+        sudo rm -rf nezha-agent_linux_${os_arch}.zip README.md
 
     if [ $# -ge 3 ]; then
         modify_agent_config "$@"
@@ -242,13 +254,11 @@ install_agent() {
         modify_agent_config 0
     fi
 
-    if [[ $# == 0 ]]; then
+    if [ $# = 0 ]; then
         before_show_menu
     fi
-    
-    # wget -t 2 -T 10 -O nezha-agent_linux_${os_arch}.zip https://raw.githubusercontent.com/nezhahq/agent/releases/download/${version}/nezha-agent_linux_${os_arch}.zip >/dev/null 2>&1
-
 }
+
 
 modify_agent_config() {
     echo -e "> 修改Agent配置"
