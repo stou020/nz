@@ -92,7 +92,7 @@ update_script() {
     echo -e "3s后执行新脚本"
     sleep 3s
     clear
-    exec ./nezha.sh
+    exec ./nezha.sh install_agent
     exit 0
 }
 
