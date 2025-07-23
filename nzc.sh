@@ -238,7 +238,7 @@ install_agent() {
     #     echo "当前最新版本为： ${_version}"
     # fi
 
-    _version="v0.17.7"
+    _version="v0.16.11"
 
     # Nezha Monitoring Folder
     sudo mkdir -p $NZ_AGENT_PATH
