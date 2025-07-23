@@ -264,7 +264,7 @@ install_agent() {
     fi
 
     sudo unzip -qo nezha-agent_linux_${os_arch}.zip &&
-        sudo mv nezha-agent $NZ_AGENT_PATH &&
+        sudo mv -f nezha-agent $NZ_AGENT_PATH &&
         sudo rm -rf nezha-agent_linux_${os_arch}.zip README.md
 
     if [ $# -ge 3 ]; then
